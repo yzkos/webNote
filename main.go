@@ -16,9 +16,7 @@ import (
 var static embed.FS
 
 //go:embed tpl/*
-var tpl embed.FS
-
-var templates, _ = template.ParseFS(tpl, "tpl/*.html")
+var tplFS embed.FS
 
 type Info struct {
 	Code     string
@@ -98,6 +96,7 @@ func Password(w http.ResponseWriter, r *http.Request) {
 
 // 加载模板
 func loadTpl(w http.ResponseWriter, data *Info, tpl string) {
+	templates, _ := template.ParseFS(tplFS, "tpl/base.html", "tpl/"+tpl+".html")
 	err := templates.ExecuteTemplate(w, tpl+".html", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
