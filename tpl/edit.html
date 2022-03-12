@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}编辑笔记</title>
+    <link rel="stylesheet" href="/static/spectre.min.css">
+    <style>
+        textarea {
+            resize: vertical;
+        }
+    </style>
+</head>
+<body class="hero bg-gray">
+<div class="hero-body">
+    <div class="container">
+        <div class="columns">
+            <div class="column col-xs-3"></div>
+            <div class="column col-xs-6">
+                <form action="/save/" method="post">
+                    <input type="hidden" name="old_password" value="{{.Password}}">
+                    <div class="form-group">
+                        <input class="form-input" type="text" name="title" value="{{.Title}}"  placeholder="标题">
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-input" name="content" placeholder="内容" rows="15">{{printf "%s" .Content}}</textarea>
+                    </div>
+                    <!--<div class="form-group">
+                        <label class="form-switch">
+                            <input type="checkbox">
+                            <i class="form-icon"></i> 高级
+                        </label>
+                    </div>-->
+                    <div class="form-group">
+                        <input class="form-input" type="text" name="code" value="{{.Code}}" placeholder="编码">
+                        <p class="form-input-hint">在网址后加入上方编码即可打开此文档。</p>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-input" type="password" name="password" value="{{.Password}}" placeholder="密码">
+                        <p class="form-input-hint">设置密码后必须使用密码才能编辑此文档。</p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                    <a href="/{{.Code}}" class="btn">返回</a>
+                </form>
+            </div>
+            <div class="column col-xs-3"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

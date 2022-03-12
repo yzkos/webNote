@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}查看笔记</title>
+    <link rel="stylesheet" href="/static/spectre.min.css">
+    <style>
+        .title{position: relative;padding-top: 30px;}
+        .title a{display: none;position: absolute;top:0;left: 0;}
+        .title:hover a{display: block;}
+    </style>
+</head>
+<body class="hero bg-gray">
+<div class="hero-body">
+    <div class="container">
+        <div class="columns">
+            <div class="column col-xs-3"></div>
+            <div class="column col-xs-6">
+                <div class="title">
+                    <a href="/edit/{{.Code}}" class="label" style="font-size: 16px;">编辑</a>
+                    <h1>{{.Title}}</h1>
+                </div>
+                <p style="white-space: pre-wrap">{{printf "%s" .Content}}</p>
+            </div>
+            <div class="column col-xs-3"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
