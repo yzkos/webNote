@@ -1,0 +1,8 @@
+version: '3'
+services:
+  go-web-note:
+    build: .
+    volumes:
+      - ./data:/data
+    ports:
+      - "8080:8080"
