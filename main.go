@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"time"
 )
@@ -43,17 +44,18 @@ func Save(w http.ResponseWriter, r *http.Request) {
 	data := getInfo(code)
 	if data.Password != "" && data.Password != oldPassword {
 		goUrl(w, r, "/"+code)
+	} else {
+		password := r.FormValue("password")
+		title := r.FormValue("title")
+		content := r.FormValue("content")
+		p := &Info{Code: code, Password: password, Title: title, Content: content}
+		res, _ := json.Marshal(p)
+		err := ioutil.WriteFile("./data/"+p.Code+".json", res, 0600)
+		if err != nil {
+			return
+		}
+		goUrl(w, r, "/"+code)
 	}
-	password := r.FormValue("password")
-	title := r.FormValue("title")
-	content := r.FormValue("content")
-	p := &Info{Code: code, Password: password, Title: title, Content: content}
-	res, _ := json.Marshal(p)
-	err := ioutil.WriteFile("./data/"+p.Code+".json", res, 0600)
-	if err != nil {
-		return
-	}
-	goUrl(w, r, "/"+code)
 }
 
 //跳转页面
@@ -63,7 +65,7 @@ func goUrl(w http.ResponseWriter, r *http.Request, url string) {
 
 // Index 首页
 func Index(w http.ResponseWriter, r *http.Request) {
-	code := r.URL.Path[len("/"):]
+	code := getCode(r, "/")
 	rand.Seed(time.Now().UnixNano())
 	a := rand.Int()
 	if code == "" {
@@ -78,7 +80,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 // Edit 编辑笔记
 func Edit(w http.ResponseWriter, r *http.Request) {
-	code := r.URL.Path[len("/edit/"):]
+	code := getCode(r, "/edit/")
 	password := r.FormValue("password")
 	data := getInfo(code)
 	if data.Password != "" && password != data.Password {
@@ -89,9 +91,13 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 
 // Password 验证密码
 func Password(w http.ResponseWriter, r *http.Request) {
-	code := r.URL.Path[len("/password/"):]
+	code := getCode(r, "/password/")
 	data := getInfo(code)
-	loadTpl(w, data, "password")
+	if data.Password != "" {
+		loadTpl(w, data, "password")
+	} else {
+		goUrl(w, r, "/"+code)
+	}
 }
 
 // 加载模板
@@ -111,6 +117,17 @@ func dataPath() {
 			return
 		}
 	}
+}
+
+func getCode(r *http.Request, url string) string {
+	code := r.URL.Path[len(url):]
+	return urlFiltration(code)
+}
+
+func urlFiltration(url string) string {
+	reg, _ := regexp.Compile("[^a-zA-Z0-9_/-]+")
+	reg.ReplaceAllString(url, "")
+	return reg.ReplaceAllString(url, "")
 }
 
 func main() {
