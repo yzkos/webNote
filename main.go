@@ -137,7 +137,7 @@ func main() {
 	http.HandleFunc("/edit/", Edit)
 	http.HandleFunc("/save/", Save)
 	http.HandleFunc("/password/", Password)
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8100", nil)
 	if err != nil {
 		return
 	}
